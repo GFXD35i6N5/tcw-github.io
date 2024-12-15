@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2&display=swap" rel="stylesheet">
+    <title>The Chowder Within</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Baloo 2', cursive;
+            background-color: #f0f0f0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-y: auto;
+        }
+
+        h1 {
+            color: #7289da;
+            font-size: 42px;
+            margin: 20px 0;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .header {
+            width: 100%;
+            padding: 10px 20px;
+            background-color: #7289da;
+            color: white;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .login-info {
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            margin-left: 10px;
+            color: white;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            padding: 20px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .posting-section, .drawing-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        input[type="url"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: none;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            color: #333;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="url"]:focus,
+        textarea:focus {
+            background-color: #e0e0e0;
+        }
+
+        button {
+            padding: 10px;
+            margin: 5px 0;
+            border: none;
+            border-radius: 5px;
+            background-color: #3b5998;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            width: 100%;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2d4373;
+        }
+
+        .post {
+            border-radius: 8px;
+            padding: 15px;
+            background: #ffffff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .timestamp {
+            font-size: 0.8em;
+            color: #808080;
+        }
+
+        .preview {
+            margin-top: 10px;
+            max-width: 100%;
+            text-align: center;
+        }
+
+        .reply-section {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .reply {
+            padding-left: 30px;
+            border-left: 2px solid #ececec;
+            margin-top: 10px;
+        }
+
+        /* Popup Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            border-radius: 10px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        canvas {
+            border: 1px solid #ccc;
+            background-color: #eaeaea;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 600px) {
+            button {
+                padding: 8px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>The Chowder Within</h1>
+
+    <div class="header">
+        <div class="login-info" id="loginStatus">Not logged in</div>
+        <button id="profileBtn" class="icon-btn"><i class="fas fa-user-cog"></i></button>
+        <button id="loginBtn" class="icon-btn"><i class="fas fa-sign-in-alt"></i></button>
+        <button id="registerBtn" class="icon-btn"><i class="fas fa-user-plus"></i></button>
+    </div>
+
+    <div class="container">
+        <div class="posting-section">
+            <textarea id="postContent" placeholder="Describe your artwork..." rows="4"></textarea>
+            <input type="url" id="urlInput" placeholder="Insert image/video URL" />
+            <button id="postBtn"><i class="fas fa-paper-plane"></i> Post</button>
+            <button id="fileUploadBtn" class="icon-btn"><i class="fas fa-file-upload" title="Upload File"></i> Upload File</button>
+        </div>
+
+        <div class="drawing-section">
+            <h3>Draw Your Art</h3>
+            <canvas id="drawingCanvas" width="400" height="300"></canvas>
+            <button id="clearCanvasBtn">Clear Canvas</button>
+        </div>
+
+        <div id="postsContainer"></div>
+    </div>
+
+    <!-- Modals for Profile, Login, and Register -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeProfile">&times;</span>
+            <h2>Customize Profile</h2>
+            <input type="text" id="editUsername" placeholder="Enter your name" />
+            <input type="url" id="editAvatarUrl" placeholder="Enter Avatar URL" />
+            <button id="saveProfileBtn">Save</button>
+        </div>
+    </div>
+
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeLogin">&times;</span>
+            <h2>Login</h2>
+            <input type="text" id="loginUsername" placeholder="Enter your username" />
+            <button id="submitLoginBtn">Login</button>
+        </div>
+    </div>
+
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeRegister">&times;</span>
+            <h2>Register</h2>
+            <input type="text" id="registerUsername" placeholder="Choose a username" />
+            <button id="submitRegisterBtn">Register</button>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        const posts = [];
+        const postsContainer = document.getElementById('postsContainer');
+
+        // Profile Modal Handling
+        const profileModal = document.getElementById("profileModal");
+        const profileBtn = document.getElementById("profileBtn");
+        const closeProfile = document.getElementById("closeProfile");
+        const saveProfileBtn = document.getElementById("saveProfileBtn");
+
+        profileBtn.onclick = function () {
+            profileModal.style.display = "block";
+        }
+        closeProfile.onclick = function () {
+            profileModal.style.display = "none";
+        }
+        window.onclick = function (event) {
+            if (event.target === profileModal) {
+                profileModal.style.display = "none";
+            }
+        }
+
+        saveProfileBtn.onclick = function () {
+            const username = document.getElementById('editUsername').value.trim();
+            const avatarUrl = document.getElementById('editAvatarUrl').value.trim();
+
+            if (username) {
+                currentUser = username;
+                document.getElementById('loginStatus').innerText = `Logged in as: ${username}`;
+                profileModal.style.display = "none"; // Close the modal
+            } else {
+                alert('Please enter a valid username.');
+            }
+        }
+
+        // Login Modal Handling
+        const loginModal = document.getElementById("loginModal");
+        const loginBtn = document.getElementById("loginBtn");
+        const closeLogin = document.getElementById("closeLogin");
+        const submitLoginBtn = document.getElementById("submitLoginBtn");
+
+        loginBtn.onclick = function () {
+            loginModal.style.display = "block";
+        }
+        closeLogin.onclick = function () {
+            loginModal.style.display = "none";
+        }
+        window.onclick = function (event) {
+            if (event.target === loginModal) {
+                loginModal.style.display = "none";
+            }
+        }
+
+        submitLoginBtn.onclick = function () {
+            const username = document.getElementById('loginUsername').value.trim();
+
+            if (username) {
+                const users = JSON.parse(localStorage.getItem('users')) || [];
+                if (users.includes(username)) {
+                    currentUser = username;
+                    document.getElementById('loginStatus').innerText = `Logged in as: ${username}`;
+                    loginModal.style.display = "none";
+                    document.getElementById('loginUsername').value = '';
+                } else {
+                    alert('User not found. Please register.');
+                }
+            } else {
+                alert('Please enter a username.');
+            }
+        }
+
+        // Register Modal Handling
+        const registerModal = document.getElementById("registerModal");
+        const registerBtn = document.getElementById("registerBtn");
+        const closeRegister = document.getElementById("closeRegister");
+        const submitRegisterBtn = document.getElementById("submitRegisterBtn");
+
+        registerBtn.onclick = function () {
+            registerModal.style.display = "block";
+        }
+        closeRegister.onclick = function () {
+            registerModal.style.display = "none";
+        }
+        window.onclick = function (event) {
+            if (event.target === registerModal) {
+                registerModal.style.display = "none";
+            }
+        }
+
+        submitRegisterBtn.onclick = function () {
+            const username = document.getElementById('registerUsername').value.trim();
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+
+            if (username) {
+                if (!users.includes(username)) {
+                    users.push(username);
+                    localStorage.setItem('users', JSON.stringify(users));
+                    alert(`Registered ${username}. You can log in now!`);
+                    registerModal.style.display = "none";
+                    document.getElementById('registerUsername').value = '';
+                } else {
+                    alert('Username already taken.');
+                }
+            } else {
+                alert('Please enter a username.');
+            }
+        };
+
+        document.getElementById('fileUploadBtn').addEventListener('click', function () {
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = '.mp4,.jpg,.jpeg,.png,.webp,.gif';
+            fileInput.onchange = function () {
+                const file = fileInput.files[0];
+                if (file) {
+                    const fileUrl = URL.createObjectURL(file);
+                    addPreview(fileUrl, file.type);
+                }
+            };
+            fileInput.click();
+        });
+
+        document.getElementById('postBtn').addEventListener('click', function () {
+            const postContent = document.getElementById('postContent').value.trim();
+            const urlInput = document.getElementById('urlInput').value.trim();
+
+            if (currentUser && (postContent || urlInput)) {
+                const timestamp = new Date().toLocaleString();
+                const postId = posts.length; // Unique identifier for the post
+                const post = {
+                    id: postId,
+                    content: postContent,
+                    url: urlInput ? new URL(urlInput).href : null,
+                    owner: currentUser,
+                    likes: 0,
+                    replies: [],
+                    timestamp: timestamp
+                };
+                posts.push(post);
+                renderPosts();
+                document.getElementById('postContent').value = '';
+                document.getElementById('urlInput').value = '';
+            } else {
+                alert('Please log in or enter content to post.');
+            }
+        });
+
+        function addPreview(fileUrl, mimeType) {
+            const previewContainer = document.createElement('div');
+            previewContainer.className = 'preview';
+
+            if (mimeType.startsWith('image/')) {
+                previewContainer.innerHTML = `<img src="${fileUrl}" alt="Image Preview" style="max-width: 100%; height: auto;">`;
+            } else if (mimeType.startsWith('video/')) {
+                previewContainer.innerHTML = `<video controls style="max-width: 100%; height: auto;">
+                                                    <source src="${fileUrl}" type="${mimeType}">
+                                                    Your browser does not support the video tag.
+                                                </video>`;
+            }
+            postsContainer.appendChild(previewContainer);
+        }
+
+        function renderPosts() {
+            postsContainer.innerHTML = '';
+            posts.forEach(post => {
+                const postDiv = document.createElement('div');
+                postDiv.className = 'post';
+                postDiv.innerHTML = `
+                    <div class="post-header">
+                        <h3>${post.owner}</h3>
+                        <span class="timestamp">${post.timestamp}</span>
+                    </div>
+                    <strong>${post.content}</strong>
+                    ${post.url ? `<div class="preview"><iframe src="${post.url}" frameborder="0" allowfullscreen style="max-width: 100%; height: auto;"></iframe></div>` : ''}
+                    <div class="like-section">
+                        <button class="icon-btn" onclick="likePost(${post.id})"><i class="far fa-thumbs-up"></i> ${post.likes} 👍</button>
+                    </div>
+                    <div class="reply-section" id="reply-section-${post.id}">
+                        <textarea id="reply-input-${post.id}" placeholder="Reply..." rows="2"></textarea>
+                        <button onclick="replyToPost(${post.id})">Reply</button>
+                    </div>
+                    <div id="replies-${post.id}">
+                        ${post.replies.map(reply => `<div class="reply">${reply}</div>`).join('')}
+                    </div>
+                `;
+                postsContainer.appendChild(postDiv);
+            });
+        }
+
+        function likePost(postId) {
+            posts[postId].likes += 1;
+            renderPosts(); // Re-render the posts to update the like count
+        }
+
+        function replyToPost(postId) {
+            const replyInput = document.getElementById(`reply-input-${postId}`);
+            const replyContent = replyInput.value.trim();
+
+            if (replyContent) {
+                posts[postId].replies.push(replyContent);
+                replyInput.value = ''; // Clear the reply input
+                renderPosts(); // Re-render the posts to include the new reply
+            } else {
+                alert('Please enter a reply.');
+            }
+        }
+
+        // Drawing functionality
+        const canvas = document.getElementById('drawingCanvas');
+        const ctx = canvas.getContext('2d');
+        let drawing = false;
+
+        canvas.addEventListener('mousedown', (e) => {
+            drawing = true;
+            ctx.beginPath();
+            ctx.moveTo(e.offsetX, e.offsetY);
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (drawing) {
+                ctx.lineTo(e.offsetX, e.offsetY);
+                ctx.stroke();
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            drawing = false;
+            ctx.closePath();
+        });
+
+        document.getElementById('clearCanvasBtn').onclick = function () {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    </script>
+</body>
+
+</html>
