@@ -1,6 +1,3 @@
- copy
-html
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -67,6 +64,13 @@ html
             padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
+        }
+        .reactions {
+            margin-top: 10px;
+        }
+        .reaction {
+            cursor: pointer;
+            margin-right: 10px;
         }
         .login, .register {
             display: none;
@@ -192,12 +196,27 @@ html
             if (currentUser && (postContent || media)) {
                 const post = document.createElement('div');
                 post.classList.add('post');
-                post.innerHTML = `<h3>${currentUser}</h3><p>${postContent}</p>${media}`;
+                post.innerHTML = `<h3>${currentUser}</h3><p>${postContent}</p>${media}
+                <div class="reactions">
+                    <i class="fas fa-thumbs-up reaction" onclick="addReaction(this, '👍')"></i>
+                    <i class="fas fa-thumbs-down reaction" onclick="addReaction(this, '👎')"></i>
+                    <i class="fas fa-heart reaction" onclick="addReaction(this, '❤️')"></i>
+                    <span class="reaction-count"></span>
+                </div>`;
                 postsContainer.prepend(post);
                 document.getElementById('postContent').value = ''; // Clear input
                 mediaPreview.innerHTML = ''; // Clear media preview
             } else {
                 alert('You must be logged in to post.');
+            }
+        }
+
+        function addReaction(element, emoji) {
+            const reactionCount = element.nextElementSibling;
+            if (!reactionCount.innerHTML.includes(emoji)) {
+                reactionCount.innerHTML += emoji + " ";
+            } else {
+                alert('You have already reacted with this emoji.');
             }
         }
 
