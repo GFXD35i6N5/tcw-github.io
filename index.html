@@ -1,12 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+2&display=swap" rel="stylesheet">
     <title>The Chowder Within</title>
     <style>
         * {
@@ -14,485 +10,230 @@
         }
 
         body {
-            font-family: 'Baloo 2', cursive;
-            background-color: #f0f0f0;
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f9f9; /* Light background */
+            color: #333; /* Dark text color */
             margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            overflow-y: auto;
-        }
-
-        h1 {
-            color: #7289da;
-            font-size: 42px;
-            margin: 20px 0;
-            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
-        }
-
-        .header {
-            width: 100%;
-            padding: 10px 20px;
-            background-color: #7289da;
-            color: white;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .login-info {
-            flex-grow: 1;
-            text-align: center;
-        }
-
-        .icon-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 20px;
-            margin-left: 10px;
-            color: white;
+            padding: 20px;
         }
 
         .container {
+            display: flex;
+            flex-direction: column;
             max-width: 800px;
-            width: 100%;
+            margin: auto; /* Center container */
+        }
+
+        .main-content {
             padding: 20px;
-            margin: 0 auto;
-            background-color: #ffffff;
-            border-radius: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+            background-color: #dc143c; /* KFC red */
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
         }
 
-        .posting-section, .drawing-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        .customization-panel {
+            background-color: #fff; /* White background for the panel */
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px; /* Space between form and posts */
         }
 
-        input[type="url"],
-        textarea {
-            width: 100%;
+        .customization-panel h2 {
+            margin-top: 0;
+            color: #dc143c; /* KFC red for the title */
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        form label {
+            margin: 10px 0 5px;
+        }
+
+        form input[type="text"],
+        form input[type="file"] {
             padding: 10px;
-            margin: 5px 0;
-            border: none;
+            margin-bottom: 10px;
             border-radius: 5px;
-            background-color: #f9f9f9;
-            color: #333;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s ease;
+            border: 1px solid #ccc; /* Light border */
+            background-color: #f9f9f9; /* Light background for inputs */
+            color: #333; /* Dark text color */
         }
 
-        input[type="url"]:focus,
-        textarea:focus {
-            background-color: #e0e0e0;
+        form input[type="text"]:focus,
+        form input[type="file"]:focus {
+            border-color: #dc143c; /* KFC red for focused inputs */
         }
 
         button {
             padding: 10px;
-            margin: 5px 0;
+            background-color: #dc143c; /* KFC red */
+            color: white;
             border: none;
             border-radius: 5px;
-            background-color: #3b5998;
-            color: white;
             cursor: pointer;
-            font-size: 14px;
-            width: 100%;
-            text-align: center;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s;
         }
 
         button:hover {
-            background-color: #2d4373;
+            background-color: #c72a3a; /* Darker red on hover */
+        }
+
+        .posts-container {
+            margin-top: 20px;
         }
 
         .post {
-            border-radius: 8px;
-            padding: 15px;
-            background: #ffffff;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .post-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background-color: #fff; /* White background for posts */
+            border-radius: 5px;
+            padding: 10px;
             margin-bottom: 10px;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
         }
 
-        .timestamp {
-            font-size: 0.8em;
-            color: #808080;
-        }
-
-        .preview {
-            margin-top: 10px;
+        .post img,
+        .post video {
             max-width: 100%;
-            text-align: center;
+            height: auto;
+            border-radius: 5px;
         }
 
-        .reply-section {
-            margin-top: 10px;
-            display: flex;
-            flex-direction: column;
+        .post iframe {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
         }
 
-        .reply {
-            padding-left: 30px;
-            border-left: 2px solid #ececec;
-            margin-top: 10px;
-        }
-
-        /* Popup Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgb(0, 0, 0);
-            background-color: rgba(0, 0, 0, 0.4);
-            padding-top: 60px;
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            border-radius: 10px;
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
+        .drawing-area {
+            margin-top: 20px;
         }
 
         canvas {
-            border: 1px solid #ccc;
-            background-color: #eaeaea;
-            margin-top: 10px;
-        }
-
-        @media (max-width: 600px) {
-            button {
-                padding: 8px;
-                font-size: 12px;
-            }
+            border: 1px solid #dc143c; /* KFC red border */
+            background-color: #f9f9f9; /* Light background for canvas */
         }
     </style>
 </head>
-
 <body>
-    <h1>The Chowder Within</h1>
-
-    <div class="header">
-        <div class="login-info" id="loginStatus">Not logged in</div>
-        <button id="profileBtn" class="icon-btn"><i class="fas fa-user-cog"></i></button>
-        <button id="loginBtn" class="icon-btn"><i class="fas fa-sign-in-alt"></i></button>
-        <button id="registerBtn" class="icon-btn"><i class="fas fa-user-plus"></i></button>
-    </div>
 
     <div class="container">
-        <div class="posting-section">
-            <textarea id="postContent" placeholder="Describe your artwork..." rows="4"></textarea>
-            <input type="url" id="urlInput" placeholder="Insert image/video URL" />
-            <button id="postBtn"><i class="fas fa-paper-plane"></i> Post</button>
-            <button id="fileUploadBtn" class="icon-btn"><i class="fas fa-file-upload" title="Upload File"></i> Upload File</button>
-        </div>
+        <div class="main-content">
+            <div class="customization-panel" id="customizationPanel">
+                <h2>The Chowder Within</h2>
+                <form id="mediaForm">
+                    <label for="mediaTitle">Media Title:</label>
+                    <input type="text" id="mediaTitle" name="mediaTitle" required>
 
-        <div class="drawing-section">
-            <h3>Draw Your Art</h3>
-            <canvas id="drawingCanvas" width="400" height="300"></canvas>
-            <button id="clearCanvasBtn">Clear Canvas</button>
-        </div>
+                    <label for="mediaFile">Upload Media:</label>
+                    <input type="file" id="mediaFile" accept="image/*,video/*" onchange="uploadMedia(event)">
 
-        <div id="postsContainer"></div>
-    </div>
+                    <label for="mediaUrl">Or Post Image/Video URL:</label>
+                    <input type="text" id="mediaUrl" placeholder="Enter image or video URL">
+                    <button type="button" onclick="postMedia()">Post Media</button>
+                </form>
 
-    <!-- Modals for Profile, Login, and Register -->
-    <div id="profileModal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="closeProfile">&times;</span>
-            <h2>Customize Profile</h2>
-            <input type="text" id="editUsername" placeholder="Enter your name" />
-            <input type="url" id="editAvatarUrl" placeholder="Enter Avatar URL" />
-            <button id="saveProfileBtn">Save</button>
-        </div>
-    </div>
+                <div class="drawing-area">
+                    <h3>Post Your Drawing</h3>
+                    <button type="button" onclick="toggleDrawingArea()">Toggle Drawing Area</button>
+                    <div id="drawingContainer" style="display: none;">
+                        <canvas id="drawingCanvas" width="400" height="400"></canvas>
+                        <button type="button" onclick="clearCanvas()">Clear Canvas</button>
+                        <label for="drawingImage">Upload Drawing:</label>
+                        <input type="file" id="drawingImage" accept="image/*" onchange="loadImage(event)">
+                    </div>
+                </div>
+            </div>
 
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="closeLogin">&times;</span>
-            <h2>Login</h2>
-            <input type="text" id="loginUsername" placeholder="Enter your username" />
-            <button id="submitLoginBtn">Login</button>
-        </div>
-    </div>
-
-    <div id="registerModal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="closeRegister">&times;</span>
-            <h2>Register</h2>
-            <input type="text" id="registerUsername" placeholder="Choose a username" />
-            <button id="submitRegisterBtn">Register</button>
+            <div id="postsContainer" class="posts-container"></div>
         </div>
     </div>
 
     <script>
-        let currentUser = null;
-        const posts = [];
-        const postsContainer = document.getElementById('postsContainer');
-
-        // Profile Modal Handling
-        const profileModal = document.getElementById("profileModal");
-        const profileBtn = document.getElementById("profileBtn");
-        const closeProfile = document.getElementById("closeProfile");
-        const saveProfileBtn = document.getElementById("saveProfileBtn");
-
-        profileBtn.onclick = function () {
-            profileModal.style.display = "block";
+        function toggleDrawingArea() {
+            const drawingContainer = document.getElementById('drawingContainer');
+            drawingContainer.style.display = drawingContainer.style.display === 'none' || drawingContainer.style.display === '' ? 'block' : 'none';
         }
-        closeProfile.onclick = function () {
-            profileModal.style.display = "none";
+
+        function clearCanvas() {
+            const canvas = document.getElementById('drawingCanvas');
+            const context = canvas.getContext('2d');
+            context.clearRect(0, 0, canvas.width, canvas.height);
         }
-        window.onclick = function (event) {
-            if (event.target === profileModal) {
-                profileModal.style.display = "none";
+
+        function loadImage(event) {
+            const canvas = document.getElementById('drawingCanvas');
+            const context = canvas.getContext('2d');
+            const file = event.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    context.drawImage(img, 0, 0, canvas.width, canvas.height);
+                }
+                img.src = e.target.result;
+            }
+            
+            reader.readAsDataURL(file);
+        }
+
+        function uploadMedia(event) {
+            const file = event.target.files[0];
+            const postsContainer = document.getElementById('postsContainer');
+            const postDiv = document.createElement('div');
+            postDiv.className = 'post';
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    let mediaContent = '';
+
+                    if (file.type.startsWith('image/')) {
+                        mediaContent = `<img src="${e.target.result}" alt="Image Post">`;
+                    } else if (file.type.startsWith('video/')) {
+                        mediaContent = `<video controls><source src="${e.target.result}" type="${file.type}">Your browser does not support the video tag.</video>`;
+                    }
+
+                    postDiv.innerHTML = mediaContent;
+                    postsContainer.prepend(postDiv); // Add new post at the top
+                }
+                reader.readAsDataURL(file);
             }
         }
 
-        saveProfileBtn.onclick = function () {
-            const username = document.getElementById('editUsername').value.trim();
-            const avatarUrl = document.getElementById('editAvatarUrl').value.trim();
+        function postMedia() {
+            const mediaUrl = document.getElementById('mediaUrl').value.trim();
+            const postsContainer = document.getElementById('postsContainer');
+            const postDiv = document.createElement('div');
+            postDiv.className = 'post';
 
-            if (username) {
-                currentUser = username;
-                document.getElementById('loginStatus').innerText = `Logged in as: ${username}`;
-                profileModal.style.display = "none"; // Close the modal
-            } else {
-                alert('Please enter a valid username.');
-            }
-        }
+            if (mediaUrl) {
+                let mediaContent = '';
 
-        // Login Modal Handling
-        const loginModal = document.getElementById("loginModal");
-        const loginBtn = document.getElementById("loginBtn");
-        const closeLogin = document.getElementById("closeLogin");
-        const submitLoginBtn = document.getElementById("submitLoginBtn");
-
-        loginBtn.onclick = function () {
-            loginModal.style.display = "block";
-        }
-        closeLogin.onclick = function () {
-            loginModal.style.display = "none";
-        }
-        window.onclick = function (event) {
-            if (event.target === loginModal) {
-                loginModal.style.display = "none";
-            }
-        }
-
-        submitLoginBtn.onclick = function () {
-            const username = document.getElementById('loginUsername').value.trim();
-
-            if (username) {
-                const users = JSON.parse(localStorage.getItem('users')) || [];
-                if (users.includes(username)) {
-                    currentUser = username;
-                    document.getElementById('loginStatus').innerText = `Logged in as: ${username}`;
-                    loginModal.style.display = "none";
-                    document.getElementById('loginUsername').value = '';
+                // Check if the URL is an image
+                if (mediaUrl.match(/\.(jpeg|jpg|gif|png)$/)) {
+                    mediaContent = `<img src="${mediaUrl}" alt="Image Post">`;
+                } 
+                // Check if the URL is a video (YouTube and more)
+                else if (mediaUrl.match(/(youtube\.com|youtu\.be|vimeo\.com)/)) {
+                    const videoId = mediaUrl.includes('embed/') ? mediaUrl.split('/embed/')[1] :
+                                    mediaUrl.includes('v=') ? mediaUrl.split('v=')[1].split('&')[0] :
+                                    mediaUrl.split('/').pop();
+                    mediaContent = `<iframe width="400" height="300" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`;
                 } else {
-                    alert('User not found. Please register.');
+                    alert("Please enter a valid image or video URL.");
+                    return;
                 }
+
+                postDiv.innerHTML = mediaContent;
+                postsContainer.prepend(postDiv); // Add new post at the top
+                document.getElementById('mediaUrl').value = ''; // Clear input field
             } else {
-                alert('Please enter a username.');
+                alert("Please enter a URL.");
             }
-        }
-
-        // Register Modal Handling
-        const registerModal = document.getElementById("registerModal");
-        const registerBtn = document.getElementById("registerBtn");
-        const closeRegister = document.getElementById("closeRegister");
-        const submitRegisterBtn = document.getElementById("submitRegisterBtn");
-
-        registerBtn.onclick = function () {
-            registerModal.style.display = "block";
-        }
-        closeRegister.onclick = function () {
-            registerModal.style.display = "none";
-        }
-        window.onclick = function (event) {
-            if (event.target === registerModal) {
-                registerModal.style.display = "none";
-            }
-        }
-
-        submitRegisterBtn.onclick = function () {
-            const username = document.getElementById('registerUsername').value.trim();
-            let users = JSON.parse(localStorage.getItem('users')) || [];
-
-            if (username) {
-                if (!users.includes(username)) {
-                    users.push(username);
-                    localStorage.setItem('users', JSON.stringify(users));
-                    alert(`Registered ${username}. You can log in now!`);
-                    registerModal.style.display = "none";
-                    document.getElementById('registerUsername').value = '';
-                } else {
-                    alert('Username already taken.');
-                }
-            } else {
-                alert('Please enter a username.');
-            }
-        };
-
-        document.getElementById('fileUploadBtn').addEventListener('click', function () {
-            const fileInput = document.createElement('input');
-            fileInput.type = 'file';
-            fileInput.accept = '.mp4,.jpg,.jpeg,.png,.webp,.gif';
-            fileInput.onchange = function () {
-                const file = fileInput.files[0];
-                if (file) {
-                    const fileUrl = URL.createObjectURL(file);
-                    addPreview(fileUrl, file.type);
-                }
-            };
-            fileInput.click();
-        });
-
-        document.getElementById('postBtn').addEventListener('click', function () {
-            const postContent = document.getElementById('postContent').value.trim();
-            const urlInput = document.getElementById('urlInput').value.trim();
-
-            if (currentUser && (postContent || urlInput)) {
-                const timestamp = new Date().toLocaleString();
-                const postId = posts.length; // Unique identifier for the post
-                const post = {
-                    id: postId,
-                    content: postContent,
-                    url: urlInput ? new URL(urlInput).href : null,
-                    owner: currentUser,
-                    likes: 0,
-                    replies: [],
-                    timestamp: timestamp
-                };
-                posts.push(post);
-                renderPosts();
-                document.getElementById('postContent').value = '';
-                document.getElementById('urlInput').value = '';
-            } else {
-                alert('Please log in or enter content to post.');
-            }
-        });
-
-        function addPreview(fileUrl, mimeType) {
-            const previewContainer = document.createElement('div');
-            previewContainer.className = 'preview';
-
-            if (mimeType.startsWith('image/')) {
-                previewContainer.innerHTML = `<img src="${fileUrl}" alt="Image Preview" style="max-width: 100%; height: auto;">`;
-            } else if (mimeType.startsWith('video/')) {
-                previewContainer.innerHTML = `<video controls style="max-width: 100%; height: auto;">
-                                                    <source src="${fileUrl}" type="${mimeType}">
-                                                    Your browser does not support the video tag.
-                                                </video>`;
-            }
-            postsContainer.appendChild(previewContainer);
-        }
-
-        function renderPosts() {
-            postsContainer.innerHTML = '';
-            posts.forEach(post => {
-                const postDiv = document.createElement('div');
-                postDiv.className = 'post';
-                postDiv.innerHTML = `
-                    <div class="post-header">
-                        <h3>${post.owner}</h3>
-                        <span class="timestamp">${post.timestamp}</span>
-                    </div>
-                    <strong>${post.content}</strong>
-                    ${post.url ? `<div class="preview"><iframe src="${post.url}" frameborder="0" allowfullscreen style="max-width: 100%; height: auto;"></iframe></div>` : ''}
-                    <div class="like-section">
-                        <button class="icon-btn" onclick="likePost(${post.id})"><i class="far fa-thumbs-up"></i> ${post.likes} 👍</button>
-                    </div>
-                    <div class="reply-section" id="reply-section-${post.id}">
-                        <textarea id="reply-input-${post.id}" placeholder="Reply..." rows="2"></textarea>
-                        <button onclick="replyToPost(${post.id})">Reply</button>
-                    </div>
-                    <div id="replies-${post.id}">
-                        ${post.replies.map(reply => `<div class="reply">${reply}</div>`).join('')}
-                    </div>
-                `;
-                postsContainer.appendChild(postDiv);
-            });
-        }
-
-        function likePost(postId) {
-            posts[postId].likes += 1;
-            renderPosts(); // Re-render the posts to update the like count
-        }
-
-        function replyToPost(postId) {
-            const replyInput = document.getElementById(`reply-input-${postId}`);
-            const replyContent = replyInput.value.trim();
-
-            if (replyContent) {
-                posts[postId].replies.push(replyContent);
-                replyInput.value = ''; // Clear the reply input
-                renderPosts(); // Re-render the posts to include the new reply
-            } else {
-                alert('Please enter a reply.');
-            }
-        }
-
-        // Drawing functionality
-        const canvas = document.getElementById('drawingCanvas');
-        const ctx = canvas.getContext('2d');
-        let drawing = false;
-
-        canvas.addEventListener('mousedown', (e) => {
-            drawing = true;
-            ctx.beginPath();
-            ctx.moveTo(e.offsetX, e.offsetY);
-        });
-
-        canvas.addEventListener('mousemove', (e) => {
-            if (drawing) {
-                ctx.lineTo(e.offsetX, e.offsetY);
-                ctx.stroke();
-            }
-        });
-
-        canvas.addEventListener('mouseup', () => {
-            drawing = false;
-            ctx.closePath();
-        });
-
-        document.getElementById('clearCanvasBtn').onclick = function () {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
     </script>
 </body>
-
 </html>
