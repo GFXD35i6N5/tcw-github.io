@@ -10,15 +10,17 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            background-color: #36393f; /* Discord background color */
+            color: white;
         }
         header {
-            background-color: #7289da; /* Header color */
+            background-color: #2c2f33; /* Darker header color */
             color: white;
             padding: 10px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 1px solid #202225;
         }
         .logo {
             font-size: 1.5em;
@@ -35,7 +37,7 @@
             padding: 20px;
         }
         .post {
-            background-color: white;
+            background-color: #40444b; /* Post background color */
             border-radius: 8px;
             padding: 15px;
             margin-bottom: 20px;
@@ -56,6 +58,8 @@
             padding: 10px;
             border-radius: 5px;
             border: 1px solid #ddd;
+            background-color: #40444b; /* Input background */
+            color: white;
         }
         .reply-section .send {
             background-color: #43b581;
@@ -74,10 +78,10 @@
         }
         .login, .register {
             display: none;
-            background-color: white;
+            background-color: #40444b; /* Form background color */
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
             margin: 20px 0;
         }
         .footer {
@@ -94,6 +98,11 @@
         }
         .hidden {
             display: none;
+        }
+        .upload-icon, .post-icon {
+            cursor: pointer;
+            font-size: 24px;
+            color: #43b581;
         }
     </style>
 </head>
@@ -127,14 +136,14 @@
             <input type="text" id="postContent" placeholder="What's on your mind?" />
 
             <input type="text" id="mediaUrl" placeholder="Image/Video URL" />
-            <button onclick="previewMedia()">Preview Media</button>
+            <i class="fas fa-file-upload upload-icon" onclick="previewMedia()"></i>
 
-            <input type="file" id="fileInput" accept="image/*,video/*" />
-            <button onclick="previewFile()">Upload File</button>
+            <input type="file" id="fileInput" accept="image/*,video/*" style="display: none;" />
+            <i class="fas fa-upload upload-icon" onclick="document.getElementById('fileInput').click(); previewFile()"></i>
 
             <div id="mediaPreview"></div>
 
-            <button class="send" onclick="createPost()">Post</button>
+            <i class="fas fa-paper-plane post-icon" onclick="createPost()"></i>
         </div>
     </main>
 
