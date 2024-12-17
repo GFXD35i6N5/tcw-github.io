@@ -3,69 +3,183 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>First Person Shooter Game</title>
+    <title>Your Social Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
-            margin: 0;
-            overflow: hidden;
-            background: #000;
-        }
-        canvas {
-            display: block;
-            background: #0c0c0c;
-        }
-        #hud {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            color: white;
             font-family: Arial, sans-serif;
-            z-index: 10;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #7289da; /* Header color */
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 1.5em;
+        }
+        .icon-bar {
+            display: flex;
+            gap: 15px;
+        }
+        .icon {
+            cursor: pointer;
+            font-size: 20px;
+        }
+        main {
+            padding: 20px;
+        }
+        .post {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .post img {
+            max-width: 100%;
+            border-radius: 5px;
+        }
+        .post .video-url {
+            margin: 10px 0;
+            color: #2c2f33;
+            font-size: 14px;
+        }
+        .reply-section {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .reply-section input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .reply-section .send {
+            background-color: #43b581;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .drawing-area {
+            border: 1px dashed #ccc;
+            height: 200px;
+            margin-top: 20px;
+            position: relative;
+        }
+        .brush-controls {
+            margin-top: 10px;
+        }
+        .brush-size {
+            width: 60px;
+        }
+        .footer {
+            background-color: #2c2f33;
+            color: white;
+            text-align: center;
+            padding: 10px 20px;
+            position: relative;
+            bottom: 0;
+            width: 100%;
         }
     </style>
 </head>
 <body>
-    <div id="hud">
-        <h1>FPS Game</h1>
-        <p>Score: <span id="score">0</span></p>
-        <p>Health: <span id="health">100</span></p>
-    </div>
-    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <header>
+        <div class="logo">YourPlatform</div>
+        <div class="icon-bar">
+            <i class="fas fa-home icon"></i>
+            <i class="fas fa-camera icon"></i>
+            <i class="fas fa-paper-plane icon"></i>
+            <i class="fas fa-user-friends icon"></i>
+        </div>
+    </header>
+
+    <main>
+        <div class="post">
+            <h3>User's Name</h3>
+            <img src="image-url.jpg" alt="Post Image"> <!-- Placeholder for images -->
+            <div class="video-url">Video URL: <a href="https://example.com">example.com</a></div>
+            <div class="reply-section">
+                <input type="text" placeholder="Add a reply...">
+                <button class="send">Send</button>
+            </div>
+            <div class="drawing-area" id="drawingArea">
+                <canvas id="canvas" width="400" height="200"></canvas>
+            </div>
+            <div class="brush-controls">
+                <label for="brushSize">Brush Size:</label>
+                <input type="range" id="brushSize" class="brush-size" min="1" max="20" value="5">
+                <button id="fillColor" style="background-color: #43b581; color: white; border: none; padding: 10px; cursor: pointer;">Fill</button>
+                <input type="color" id="colorPicker" value="#000000">
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2023 YourPlatform. All rights reserved.</p>
+    </footer>
 
     <script>
-        const canvas = document.getElementById('gameCanvas');
+        const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
+        let painting = false;
+        let brushSize = 5;
+        let brushColor = '#000000';
 
-        // Game variables
-        let score = 0;
-        let health = 100;
-
-        // Function to update the HUD
-        function updateHUD() {
-            document.getElementById('score').innerText = score;
-            document.getElementById('health').innerText = health;
+        // Start painting
+        function startPosition(e) {
+            painting = true;
+            draw(e);
         }
 
-        // Function to draw a simple scene
-        function drawScene() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Example: Draw a simple rectangle to represent the player
-            ctx.fillStyle = 'green';
-            ctx.fillRect(canvas.width / 2 - 25, canvas.height / 2 - 25, 50, 50);
-            
-            // Draw more game elements here (enemies, obstacles, etc.)
+        // End painting
+        function endPosition() {
+            painting = false;
+            ctx.beginPath(); // Reset the path so we don't connect lines
         }
 
-        // Main game loop
-        function gameLoop() {
-            drawScene();
-            updateHUD();
-            requestAnimationFrame(gameLoop);
+        // Draw on canvas
+        function draw(e) {
+            if (!painting) return;
+            ctx.lineWidth = brushSize;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = brushColor;
+
+            ctx.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
         }
 
-        // Start the game
-        gameLoop();
+        // Event listeners for mouse movements
+        canvas.addEventListener('mousedown', startPosition);
+        canvas.addEventListener('mouseup', endPosition);
+        canvas.addEventListener('mousemove', draw);
+
+        // Change brush size
+        document.getElementById('brushSize').addEventListener('input', function() {
+            brushSize = this.value;
+        });
+
+        // Change brush color
+        document.getElementById('colorPicker').addEventListener('input', function() {
+            brushColor = this.value;
+        });
+
+        // Fill the canvas with the selected color
+        document.getElementById('fillColor').addEventListener('click', function() {
+            ctx.fillStyle = brushColor;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        });
     </script>
 </body>
 </html>
