@@ -9,40 +9,114 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
-            background-color: #f4f4f4;
+            background-color: #f5f5f5; /* Light background */
         }
 
         header {
-            background-color: #007BFF;
+            background-color: #A50000; /* KFC Red */
             color: white;
             padding: 20px;
             text-align: center;
+            border-radius: 5px;
         }
 
         section {
             margin: 20px 0;
             padding: 20px;
             background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        #profile-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        #profile-pic {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 2px solid #A50000; /* KFC Red */
+            margin-right: 20px;
+        }
+
+        #profile-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        input, textarea {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 2px solid #A50000; /* KFC Red */
             border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            outline: none;
+        }
+
+        #post-button {
+            background-color: #4CAF50; /* Green */
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #post-button:hover {
+            background-color: #45a049; /* Darker green */
+        }
+
+        #upload-section {
+            display: flex;
+            flex-direction: column;
         }
 
         #posts-container {
             display: flex;
             flex-wrap: wrap;
+            justify-content: space-around;
         }
 
         .post {
             margin: 10px;
-            padding: 10px;
+            padding: 5px;
             border: 1px solid #ddd;
             border-radius: 5px;
-            width: 100px;
+            width: 80px;
             text-align: center;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
         #drawing-canvas {
             border: 1px solid #ddd;
+            background-color: #fff;
+        }
+
+        .icon {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+        }
+
+        .icon-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            margin-right: 10px;
+        }
+
+        .icon-button:hover {
+            background-color: #A50000; /* KFC Red */
+            color: white;
+            border-radius: 5px;
+        }
+
+        .color-picker, .brush-size {
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -51,11 +125,21 @@
         <h1>Post Sharing Platform</h1>
     </header>
     <main>
+        <section id="profile-section">
+            <input type="file" id="profile-pic-input" accept="image/*" />
+            <img id="profile-pic" src="" alt="Profile Picture" />
+            <div id="profile-info">
+                <input type="text" id="username-input" placeholder="Enter your name" />
+                <textarea id="bio-input" placeholder="Enter your bio" rows="3"></textarea>
+                <button id="update-profile">Update Profile</button>
+            </div>
+        </section>
+
         <section id="upload-section">
             <h2>Upload or Share a Link</h2>
             <input type="file" id="file-upload" accept="image/*" />
             <input type="url" id="url-input" placeholder="Paste your URL here" />
-            <button id="submit-button">Submit</button>
+            <button id="submit-button" id="post-button">Submit <img src="https://img.icons8.com/ios-filled/24/ffffff/plus.png" class="icon" alt="Submit icon"/></button>
         </section>
         
         <section id="post-display">
@@ -66,11 +150,51 @@
         <section id="drawing-section">
             <h2>Advanced Drawing Feature</h2>
             <canvas id="drawing-canvas" width="500" height="400"></canvas>
-            <button id="clear-canvas">Clear Canvas</button>
+            <div class="brush-size">
+                <label for="brush-size">Brush Size: </label>
+                <input type="range" id="brush-size" min="1" max="50" value="5">
+            </div>
+            <div class="color-picker">
+                <label for="color-picker">Choose Color: </label>
+                <input type="color" id="color-picker" value="#000000">
+            </div>
+            <button id="fill-canvas" class="icon-button">Fill <img src="https://img.icons8.com/ios-filled/24/ff5722/paint-bucket.png" class="icon" alt="Fill icon"/></button>
+            <button id="clear-canvas" class="icon-button">Clear <img src="https://img.icons8.com/ios-filled/24/ff5722/trash.png" class="icon" alt="Clear icon"/></button>
         </section>
     </main>
 
     <script>
+        // Profile Update Functionality
+        document.getElementById('update-profile').addEventListener('click', function() {
+            const username = document.getElementById('username-input').value;
+            const bio = document.getElementById('bio-input').value;
+            const profilePicInput = document.getElementById('profile-pic-input');
+
+            // Update username and bio in the profile info
+            if (username) {
+                document.getElementById('username-input').value = username;
+            }
+
+            if (bio) {
+                document.getElementById('bio-input').value = bio;
+            }
+
+            // Update profile picture
+            if (profilePicInput.files.length > 0) {
+                const file = profilePicInput.files[0];
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const profilePic = document.getElementById('profile-pic');
+                    profilePic.src = event.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+
+            // Clear inputs
+            profilePicInput.value = '';
+        });
+
+        // Post Submission Functionality
         document.getElementById('submit-button').addEventListener('click', function() {
             const fileInput = document.getElementById('file-upload');
             const urlInput = document.getElementById('url-input');
@@ -104,6 +228,17 @@
         const canvas = document.getElementById('drawing-canvas');
         const ctx = canvas.getContext('2d');
         let drawing = false;
+        let brushSize = 5;
+        let brushColor = '#000000';
+
+        // Update brush size and color based on user input
+        document.getElementById('brush-size').addEventListener('input', function(event) {
+            brushSize = event.target.value;
+        });
+
+        document.getElementById('color-picker').addEventListener('input', function(event) {
+            brushColor = event.target.value;
+        });
 
         canvas.addEventListener('mousedown', () => {
             drawing = true;
@@ -118,15 +253,21 @@
 
         function draw(e) {
             if (!drawing) return;
-            ctx.lineWidth = 5;
+            ctx.lineWidth = brushSize;
             ctx.lineCap = 'round';
-            ctx.strokeStyle = 'black';
+            ctx.strokeStyle = brushColor;
 
             ctx.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
             ctx.stroke();
             ctx.beginPath();
             ctx.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
         }
+
+        // Fill canvas functionality
+        document.getElementById('fill-canvas').addEventListener('click', function() {
+            ctx.fillStyle = brushColor;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        });
 
         // Clear canvas functionality
         document.getElementById('clear-canvas').addEventListener('click', function() {
