@@ -1,3 +1,6 @@
+ copy
+html
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -41,14 +44,10 @@
             margin-bottom: 20px;
             position: relative;
         }
-        .post img {
+        .post img, .post video {
             max-width: 100%;
             border-radius: 5px;
-        }
-        .post .video-url {
-            margin: 10px 0;
-            color: #2c2f33;
-            font-size: 14px;
+            margin-top: 10px;
         }
         .reply-section {
             display: flex;
@@ -69,17 +68,13 @@
             border-radius: 5px;
             cursor: pointer;
         }
-        .drawing-area {
-            border: 1px dashed #ccc;
-            height: 200px;
-            margin-top: 20px;
-            position: relative;
-        }
-        .brush-controls {
-            margin-top: 10px;
-        }
-        .brush-size {
-            width: 60px;
+        .login, .register {
+            display: none;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
         }
         .footer {
             background-color: #2c2f33;
@@ -90,37 +85,52 @@
             bottom: 0;
             width: 100%;
         }
+        .active {
+            display: block;
+        }
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
     <header>
         <div class="logo">YourPlatform</div>
         <div class="icon-bar">
-            <i class="fas fa-home icon"></i>
-            <i class="fas fa-camera icon"></i>
-            <i class="fas fa-paper-plane icon"></i>
-            <i class="fas fa-user-friends icon"></i>
+            <i class="fas fa-home icon" onclick="showPosts()"></i>
+            <i class="fas fa-user-plus icon" onclick="showRegister()"></i>
+            <i class="fas fa-sign-in-alt icon" onclick="showLogin()"></i>
         </div>
     </header>
 
     <main>
+        <div id="postsContainer"></div>
+
+        <div class="login hidden" id="loginForm">
+            <h3>Login</h3>
+            <input type="text" id="loginUsername" placeholder="Username">
+            <button onclick="login()">Login</button>
+        </div>
+
+        <div class="register hidden" id="registerForm">
+            <h3>Register</h3>
+            <input type="text" id="registerUsername" placeholder="Username">
+            <button onclick="register()">Register</button>
+        </div>
+
         <div class="post">
-            <h3>User's Name</h3>
-            <img src="image-url.jpg" alt="Post Image"> <!-- Placeholder for images -->
-            <div class="video-url">Video URL: <a href="https://example.com">example.com</a></div>
-            <div class="reply-section">
-                <input type="text" placeholder="Add a reply...">
-                <button class="send">Send</button>
-            </div>
-            <div class="drawing-area" id="drawingArea">
-                <canvas id="canvas" width="400" height="200"></canvas>
-            </div>
-            <div class="brush-controls">
-                <label for="brushSize">Brush Size:</label>
-                <input type="range" id="brushSize" class="brush-size" min="1" max="20" value="5">
-                <button id="fillColor" style="background-color: #43b581; color: white; border: none; padding: 10px; cursor: pointer;">Fill</button>
-                <input type="color" id="colorPicker" value="#000000">
-            </div>
+            <h3>Create a Post</h3>
+            <input type="text" id="postContent" placeholder="What's on your mind?" />
+
+            <input type="text" id="mediaUrl" placeholder="Image/Video URL" />
+            <button onclick="previewMedia()">Preview Media</button>
+
+            <input type="file" id="fileInput" accept="image/*,video/*" />
+            <button onclick="previewFile()">Upload File</button>
+
+            <div id="mediaPreview"></div>
+
+            <button class="send" onclick="createPost()">Post</button>
         </div>
     </main>
 
@@ -129,57 +139,107 @@
     </footer>
 
     <script>
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        let painting = false;
-        let brushSize = 5;
-        let brushColor = '#000000';
+        const postsContainer = document.getElementById('postsContainer');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const mediaPreview = document.getElementById('mediaPreview');
+        let currentUser = null;
 
-        // Start painting
-        function startPosition(e) {
-            painting = true;
-            draw(e);
+        function showPosts() {
+            loginForm.classList.add('hidden');
+            registerForm.classList.add('hidden');
+            postsContainer.classList.remove('hidden');
+            renderPosts();
         }
 
-        // End painting
-        function endPosition() {
-            painting = false;
-            ctx.beginPath(); // Reset the path so we don't connect lines
+        function showLogin() {
+            loginForm.classList.remove('hidden');
+            registerForm.classList.add('hidden');
+            postsContainer.classList.add('hidden');
         }
 
-        // Draw on canvas
-        function draw(e) {
-            if (!painting) return;
-            ctx.lineWidth = brushSize;
-            ctx.lineCap = 'round';
-            ctx.strokeStyle = brushColor;
-
-            ctx.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+        function showRegister() {
+            registerForm.classList.remove('hidden');
+            loginForm.classList.add('hidden');
+            postsContainer.classList.add('hidden');
         }
 
-        // Event listeners for mouse movements
-        canvas.addEventListener('mousedown', startPosition);
-        canvas.addEventListener('mouseup', endPosition);
-        canvas.addEventListener('mousemove', draw);
+        function register() {
+            const username = document.getElementById('registerUsername').value;
+            if (username) {
+                currentUser = username;
+                alert(`Registered as ${username}`);
+                showPosts();
+            } else {
+                alert('Please enter a username.');
+            }
+        }
 
-        // Change brush size
-        document.getElementById('brushSize').addEventListener('input', function() {
-            brushSize = this.value;
-        });
+        function login() {
+            const username = document.getElementById('loginUsername').value;
+            if (username) {
+                currentUser = username;
+                alert(`Logged in as ${username}`);
+                showPosts();
+            } else {
+                alert('Please enter a username.');
+            }
+        }
 
-        // Change brush color
-        document.getElementById('colorPicker').addEventListener('input', function() {
-            brushColor = this.value;
-        });
+        function createPost() {
+            const postContent = document.getElementById('postContent').value;
+            const media = mediaPreview.innerHTML;
+            if (currentUser && (postContent || media)) {
+                const post = document.createElement('div');
+                post.classList.add('post');
+                post.innerHTML = `<h3>${currentUser}</h3><p>${postContent}</p>${media}`;
+                postsContainer.prepend(post);
+                document.getElementById('postContent').value = ''; // Clear input
+                mediaPreview.innerHTML = ''; // Clear media preview
+            } else {
+                alert('You must be logged in to post.');
+            }
+        }
 
-        // Fill the canvas with the selected color
-        document.getElementById('fillColor').addEventListener('click', function() {
-            ctx.fillStyle = brushColor;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-        });
+        function previewMedia() {
+            const mediaUrl = document.getElementById('mediaUrl').value;
+            if (mediaUrl) {
+                const mediaElement = document.createElement('div');
+                if (mediaUrl.match(/\.(jpeg|jpg|gif|png)$/) != null) {
+                    mediaElement.innerHTML = `<img src="${mediaUrl}" alt="Image Preview">`;
+                } else if (mediaUrl.match(/\.(mp4|webm|ogg)$/) != null) {
+                    mediaElement.innerHTML = `<video controls><source src="${mediaUrl}" type="video/mp4">Your browser does not support the video tag.</video>`;
+                } else {
+                    alert('Please enter a valid image or video URL.');
+                }
+                mediaPreview.innerHTML = ''; // Clear previous previews
+                mediaPreview.appendChild(mediaElement);
+            }
+        }
+
+        function previewFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const mediaElement = document.createElement('div');
+                    if (file.type.match('image.*')) {
+                        mediaElement.innerHTML = `<img src="${e.target.result}" alt="File Preview">`;
+                    } else if (file.type.match('video.*')) {
+                        mediaElement.innerHTML = `<video controls><source src="${e.target.result}" type="${file.type}">Your browser does not support the video tag.</video>`;
+                    }
+                    mediaPreview.innerHTML = ''; // Clear previous previews
+                    mediaPreview.appendChild(mediaElement);
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function renderPosts() {
+            // Placeholder for rendering existing posts
+            postsContainer.innerHTML = ''; // Clear previous posts
+        }
     </script>
 </body>
 </html>
