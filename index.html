@@ -3,237 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Chowder Within</title>
+    <title>Icon-Oriented Post Sharing</title>
     <style>
-        * {
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f9f9f9; /* Light background */
-            color: #333; /* Dark text color */
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
+            background-color: #f4f4f4;
         }
 
-        .container {
-            display: flex;
-            flex-direction: column;
-            max-width: 800px;
-            margin: auto; /* Center container */
-        }
-
-        .main-content {
-            padding: 20px;
-            background-color: #dc143c; /* KFC red */
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-        }
-
-        .customization-panel {
-            background-color: #fff; /* White background for the panel */
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px; /* Space between form and posts */
-        }
-
-        .customization-panel h2 {
-            margin-top: 0;
-            color: #dc143c; /* KFC red for the title */
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        form label {
-            margin: 10px 0 5px;
-        }
-
-        form input[type="text"],
-        form input[type="file"] {
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc; /* Light border */
-            background-color: #f9f9f9; /* Light background for inputs */
-            color: #333; /* Dark text color */
-        }
-
-        form input[type="text"]:focus,
-        form input[type="file"]:focus {
-            border-color: #dc143c; /* KFC red for focused inputs */
-        }
-
-        button {
-            padding: 10px;
-            background-color: #dc143c; /* KFC red */
+        header {
+            background-color: #007BFF;
             color: white;
-            border: none;
+            padding: 20px;
+            text-align: center;
+        }
+
+        section {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: white;
             border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        button:hover {
-            background-color: #c72a3a; /* Darker red on hover */
-        }
-
-        .posts-container {
-            margin-top: 20px;
+        #posts-container {
+            display: flex;
+            flex-wrap: wrap;
         }
 
         .post {
-            background-color: #fff; /* White background for posts */
-            border-radius: 5px;
+            margin: 10px;
             padding: 10px;
-            margin-bottom: 10px;
-            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
-        }
-
-        .post img,
-        .post video {
-            max-width: 100%;
-            height: auto;
+            border: 1px solid #ddd;
             border-radius: 5px;
+            width: 100px;
+            text-align: center;
         }
 
-        .post iframe {
-            max-width: 100%;
-            height: auto;
-            border-radius: 5px;
-        }
-
-        .drawing-area {
-            margin-top: 20px;
-        }
-
-        canvas {
-            border: 1px solid #dc143c; /* KFC red border */
-            background-color: #f9f9f9; /* Light background for canvas */
+        #drawing-canvas {
+            border: 1px solid #ddd;
         }
     </style>
 </head>
 <body>
+    <header>
+        <h1>Post Sharing Platform</h1>
+    </header>
+    <main>
+        <section id="upload-section">
+            <h2>Upload or Share a Link</h2>
+            <input type="file" id="file-upload" accept="image/*" />
+            <input type="url" id="url-input" placeholder="Paste your URL here" />
+            <button id="submit-button">Submit</button>
+        </section>
+        
+        <section id="post-display">
+            <h2>Posts</h2>
+            <div id="posts-container"></div>
+        </section>
 
-    <div class="container">
-        <div class="main-content">
-            <div class="customization-panel" id="customizationPanel">
-                <h2>The Chowder Within</h2>
-                <form id="mediaForm">
-                    <label for="mediaTitle">Media Title:</label>
-                    <input type="text" id="mediaTitle" name="mediaTitle" required>
-
-                    <label for="mediaFile">Upload Media:</label>
-                    <input type="file" id="mediaFile" accept="image/*,video/*" onchange="uploadMedia(event)">
-
-                    <label for="mediaUrl">Or Post Image/Video URL:</label>
-                    <input type="text" id="mediaUrl" placeholder="Enter image or video URL">
-                    <button type="button" onclick="postMedia()">Post Media</button>
-                </form>
-
-                <div class="drawing-area">
-                    <h3>Post Your Drawing</h3>
-                    <button type="button" onclick="toggleDrawingArea()">Toggle Drawing Area</button>
-                    <div id="drawingContainer" style="display: none;">
-                        <canvas id="drawingCanvas" width="400" height="400"></canvas>
-                        <button type="button" onclick="clearCanvas()">Clear Canvas</button>
-                        <label for="drawingImage">Upload Drawing:</label>
-                        <input type="file" id="drawingImage" accept="image/*" onchange="loadImage(event)">
-                    </div>
-                </div>
-            </div>
-
-            <div id="postsContainer" class="posts-container"></div>
-        </div>
-    </div>
+        <section id="drawing-section">
+            <h2>Advanced Drawing Feature</h2>
+            <canvas id="drawing-canvas" width="500" height="400"></canvas>
+            <button id="clear-canvas">Clear Canvas</button>
+        </section>
+    </main>
 
     <script>
-        function toggleDrawingArea() {
-            const drawingContainer = document.getElementById('drawingContainer');
-            drawingContainer.style.display = drawingContainer.style.display === 'none' || drawingContainer.style.display === '' ? 'block' : 'none';
-        }
+        document.getElementById('submit-button').addEventListener('click', function() {
+            const fileInput = document.getElementById('file-upload');
+            const urlInput = document.getElementById('url-input');
+            const postsContainer = document.getElementById('posts-container');
 
-        function clearCanvas() {
-            const canvas = document.getElementById('drawingCanvas');
-            const context = canvas.getContext('2d');
-            context.clearRect(0, 0, canvas.width, canvas.height);
-        }
-
-        function loadImage(event) {
-            const canvas = document.getElementById('drawingCanvas');
-            const context = canvas.getContext('2d');
-            const file = event.target.files[0];
-            const reader = new FileReader();
-
-            reader.onload = function(e) {
-                const img = new Image();
-                img.onload = function() {
-                    context.drawImage(img, 0, 0, canvas.width, canvas.height);
-                }
-                img.src = e.target.result;
-            }
-            
-            reader.readAsDataURL(file);
-        }
-
-        function uploadMedia(event) {
-            const file = event.target.files[0];
-            const postsContainer = document.getElementById('postsContainer');
-            const postDiv = document.createElement('div');
-            postDiv.className = 'post';
-
-            if (file) {
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
                 const reader = new FileReader();
-                reader.onload = function(e) {
-                    let mediaContent = '';
-
-                    if (file.type.startsWith('image/')) {
-                        mediaContent = `<img src="${e.target.result}" alt="Image Post">`;
-                    } else if (file.type.startsWith('video/')) {
-                        mediaContent = `<video controls><source src="${e.target.result}" type="${file.type}">Your browser does not support the video tag.</video>`;
-                    }
-
-                    postDiv.innerHTML = mediaContent;
-                    postsContainer.prepend(postDiv); // Add new post at the top
+                reader.onload = function(event) {
+                    const img = document.createElement('img');
+                    img.src = event.target.result;
+                    img.className = 'post';
+                    postsContainer.appendChild(img);
                 }
                 reader.readAsDataURL(file);
             }
-        }
 
-        function postMedia() {
-            const mediaUrl = document.getElementById('mediaUrl').value.trim();
-            const postsContainer = document.getElementById('postsContainer');
-            const postDiv = document.createElement('div');
-            postDiv.className = 'post';
-
-            if (mediaUrl) {
-                let mediaContent = '';
-
-                // Check if the URL is an image
-                if (mediaUrl.match(/\.(jpeg|jpg|gif|png)$/)) {
-                    mediaContent = `<img src="${mediaUrl}" alt="Image Post">`;
-                } 
-                // Check if the URL is a video (YouTube and more)
-                else if (mediaUrl.match(/(youtube\.com|youtu\.be|vimeo\.com)/)) {
-                    const videoId = mediaUrl.includes('embed/') ? mediaUrl.split('/embed/')[1] :
-                                    mediaUrl.includes('v=') ? mediaUrl.split('v=')[1].split('&')[0] :
-                                    mediaUrl.split('/').pop();
-                    mediaContent = `<iframe width="400" height="300" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`;
-                } else {
-                    alert("Please enter a valid image or video URL.");
-                    return;
-                }
-
-                postDiv.innerHTML = mediaContent;
-                postsContainer.prepend(postDiv); // Add new post at the top
-                document.getElementById('mediaUrl').value = ''; // Clear input field
-            } else {
-                alert("Please enter a URL.");
+            if (urlInput.value) {
+                const post = document.createElement('div');
+                post.className = 'post';
+                post.innerHTML = `<a href="${urlInput.value}" target="_blank">${urlInput.value}</a>`;
+                postsContainer.appendChild(post);
             }
+
+            // Clear inputs
+            fileInput.value = '';
+            urlInput.value = '';
+        });
+
+        // Drawing feature
+        const canvas = document.getElementById('drawing-canvas');
+        const ctx = canvas.getContext('2d');
+        let drawing = false;
+
+        canvas.addEventListener('mousedown', () => {
+            drawing = true;
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            drawing = false;
+            ctx.beginPath(); // Reset path
+        });
+
+        canvas.addEventListener('mousemove', draw);
+
+        function draw(e) {
+            if (!drawing) return;
+            ctx.lineWidth = 5;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = 'black';
+
+            ctx.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
         }
+
+        // Clear canvas functionality
+        document.getElementById('clear-canvas').addEventListener('click', function() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        });
     </script>
 </body>
 </html>
