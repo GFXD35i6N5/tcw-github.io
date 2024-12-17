@@ -17,7 +17,7 @@
             color: white;
             padding: 20px;
             text-align: center;
-            border-radius: 5px;
+            border-radius: 10px;
         }
 
         section {
@@ -25,7 +25,7 @@
             padding: 20px;
             background-color: white;
             border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
         #profile-section {
@@ -50,9 +50,10 @@
         input, textarea {
             margin-bottom: 10px;
             padding: 10px;
-            border: 2px solid #A50000; /* KFC Red */
-            border-radius: 5px;
+            border: none; /* No borders */
+            border-radius: 10px;
             outline: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
         #post-button {
@@ -60,8 +61,9 @@
             color: white;
             border: none;
             padding: 10px;
-            border-radius: 5px;
+            border-radius: 10px;
             cursor: pointer;
+            transition: background-color 0.3s;
         }
 
         #post-button:hover {
@@ -81,9 +83,8 @@
 
         .post {
             margin: 10px;
-            padding: 5px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            padding: 15px; /* Increased padding for text */
+            border-radius: 10px;
             width: 80px;
             text-align: center;
             background-color: #f9f9f9;
@@ -91,8 +92,9 @@
         }
 
         #drawing-canvas {
-            border: 1px solid #ddd;
+            border: none; /* No border */
             background-color: #fff;
+            border-radius: 10px;
         }
 
         .icon {
@@ -112,11 +114,16 @@
         .icon-button:hover {
             background-color: #A50000; /* KFC Red */
             color: white;
-            border-radius: 5px;
+            border-radius: 10px;
         }
 
         .color-picker, .brush-size {
             margin-top: 10px;
+        }
+
+        #text-input {
+            width: 100%; /* Full width for text input */
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -139,6 +146,7 @@
             <h2>Upload or Share a Link</h2>
             <input type="file" id="file-upload" accept="image/*" />
             <input type="url" id="url-input" placeholder="Paste your URL here" />
+            <input type="text" id="text-input" placeholder="Type your text here" />
             <button id="submit-button" id="post-button">Submit <img src="https://img.icons8.com/ios-filled/24/ffffff/plus.png" class="icon" alt="Submit icon"/></button>
         </section>
         
@@ -158,6 +166,7 @@
                 <label for="color-picker">Choose Color: </label>
                 <input type="color" id="color-picker" value="#000000">
             </div>
+            <button id="save-drawing" class="icon-button">Save Drawing <img src="https://img.icons8.com/ios-filled/24/ff5722/save.png" class="icon" alt="Save icon"/></button>
             <button id="fill-canvas" class="icon-button">Fill <img src="https://img.icons8.com/ios-filled/24/ff5722/paint-bucket.png" class="icon" alt="Fill icon"/></button>
             <button id="clear-canvas" class="icon-button">Clear <img src="https://img.icons8.com/ios-filled/24/ff5722/trash.png" class="icon" alt="Clear icon"/></button>
         </section>
@@ -198,8 +207,21 @@
         document.getElementById('submit-button').addEventListener('click', function() {
             const fileInput = document.getElementById('file-upload');
             const urlInput = document.getElementById('url-input');
+            const textInput = document.getElementById('text-input');
             const postsContainer = document.getElementById('posts-container');
 
+            // Create post element
+            const post = document.createElement('div');
+            post.className = 'post';
+
+            // Add text to post if available
+            if (textInput.value) {
+                const textPost = document.createElement('p');
+                textPost.textContent = textInput.value;
+                post.appendChild(textPost);
+            }
+
+            // Add image to post if uploaded
             if (fileInput.files.length > 0) {
                 const file = fileInput.files[0];
                 const reader = new FileReader();
@@ -207,21 +229,27 @@
                     const img = document.createElement('img');
                     img.src = event.target.result;
                     img.className = 'post';
-                    postsContainer.appendChild(img);
+                    post.appendChild(img);
                 }
                 reader.readAsDataURL(file);
             }
 
+            // Add URL to post if provided
             if (urlInput.value) {
-                const post = document.createElement('div');
-                post.className = 'post';
-                post.innerHTML = `<a href="${urlInput.value}" target="_blank">${urlInput.value}</a>`;
-                postsContainer.appendChild(post);
+                const urlPost = document.createElement('a');
+                urlPost.href = urlInput.value;
+                urlPost.target = "_blank";
+                urlPost.textContent = urlInput.value;
+                post.appendChild(urlPost);
             }
+
+            // Append the constructed post to the container
+            postsContainer.appendChild(post);
 
             // Clear inputs
             fileInput.value = '';
             urlInput.value = '';
+            textInput.value = '';
         });
 
         // Drawing feature
@@ -262,6 +290,20 @@
             ctx.beginPath();
             ctx.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
         }
+
+        // Save drawing functionality
+        document.getElementById('save-drawing').addEventListener('click', function() {
+            const post = document.createElement('div');
+            post.className = 'post';
+
+            const img = document.createElement('img');
+            img.src = canvas.toDataURL(); // Convert canvas to image
+            img.className = 'post';
+            post.appendChild(img);
+
+            const postsContainer = document.getElementById('posts-container');
+            postsContainer.appendChild(post);
+        });
 
         // Fill canvas functionality
         document.getElementById('fill-canvas').addEventListener('click', function() {
