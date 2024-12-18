@@ -3,271 +3,400 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Social Platform</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <meta name="description" content="TCW - The Connect World, a modern social platform to connect with friends and share your life.">
+    <link rel="icon" href="favicon.ico" type="image/x-icon" sizes="32x32">
+    <title>TCW - The Connect World</title>
+    
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            background-color: #36393f; /* Discord background color */
-            color: white;
         }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: auto;
+        }
+
         header {
-            background-color: #2c2f33; /* Darker header color */
+            background: #3b5998;
+            color: #fff;
+            padding: 20px 0;
+        }
+
+        header h1 {
+            display: inline;
+        }
+
+        header nav {
+            float: right;
+        }
+
+        header nav ul {
+            list-style: none;
+        }
+
+        header nav ul li {
+            display: inline;
+            margin-left: 20px;
+        }
+
+        header nav ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .hero {
+            background: url('hero.jpg') no-repeat center center/cover;
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .cta {
+            background: #ff5733;
             color: white;
             padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        section {
+            padding: 40px 0;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #post-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #post-title, #post-content {
+            width: 100%;
+            max-width: 600px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        #posts {
+            max-width: 600px;
+            margin: auto;
+        }
+
+        .post {
+            background: #fff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .post-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #202225;
         }
-        .logo {
-            font-size: 1.5em;
-        }
-        .icon-bar {
-            display: flex;
-            gap: 15px;
-        }
-        .icon {
-            cursor: pointer;
-            font-size: 20px;
-        }
-        main {
-            padding: 20px;
-        }
-        .post {
-            background-color: #40444b; /* Post background color */
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 20px;
-            position: relative;
-        }
-        .post img, .post video {
-            max-width: 100%;
-            border-radius: 5px;
+
+        .post-content {
             margin-top: 10px;
+            font-size: 14px;
         }
-        .reply-section {
-            display: flex;
-            align-items: center;
-            margin-top: 10px;
-        }
-        .reply-section input {
-            flex: 1;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-            background-color: #40444b; /* Input background */
-            color: white;
-        }
-        .reply-section .send {
-            background-color: #43b581;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .reactions {
-            margin-top: 10px;
-        }
-        .reaction {
-            cursor: pointer;
-            margin-right: 10px;
-        }
-        .login, .register {
+
+        /* Login Modal Styles */
+        .modal {
             display: none;
-            background-color: #40444b; /* Form background color */
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            margin: 20px 0;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
         }
-        .footer {
-            background-color: #2c2f33;
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            border-radius: 5px;
+        }
+
+        .close-modal {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close-modal:hover,
+        .close-modal:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        footer {
+            background: #3b5998;
             color: white;
             text-align: center;
-            padding: 10px 20px;
-            position: relative;
-            bottom: 0;
-            width: 100%;
+            padding: 20px 0;
         }
-        .active {
-            display: block;
+
+        footer ul {
+            list-style: none;
         }
-        .hidden {
-            display: none;
+
+        footer ul li {
+            display: inline;
+            margin: 0 10px;
         }
-        .upload-icon, .post-icon {
-            cursor: pointer;
-            font-size: 24px;
-            color: #43b581;
+
+        footer ul li a {
+            color: white;
+            text-decoration: none;
         }
     </style>
 </head>
 <body>
     <header>
-        <div class="logo">YourPlatform</div>
-        <div class="icon-bar">
-            <i class="fas fa-home icon" onclick="showPosts()"></i>
-            <i class="fas fa-user-plus icon" onclick="showRegister()"></i>
-            <i class="fas fa-sign-in-alt icon" onclick="showLogin()"></i>
+        <div class="container">
+            <h1>TCW</h1>
+            <nav>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#login" id="open-login">Login</a></li>
+                </ul>
+            </nav>
         </div>
     </header>
 
     <main>
-        <div id="postsContainer"></div>
+        <section id="home" class="hero">
+            <div class="container">
+                <h2>Welcome to TCW</h2>
+                <p>Connect with friends, discover new interests, and share your life.</p>
+                <a href="#signup" class="cta">Join Now</a>
+            </div>
+        </section>
 
-        <div class="login hidden" id="loginForm">
-            <h3>Login</h3>
-            <input type="text" id="loginUsername" placeholder="Username">
-            <button onclick="login()">Login</button>
-        </div>
-
-        <div class="register hidden" id="registerForm">
-            <h3>Register</h3>
-            <input type="text" id="registerUsername" placeholder="Username">
-            <button onclick="register()">Register</button>
-        </div>
-
-        <div class="post">
-            <h3>Create a Post</h3>
-            <input type="text" id="postContent" placeholder="What's on your mind?" />
-
-            <input type="text" id="mediaUrl" placeholder="Image/Video URL" />
-            <i class="fas fa-file-upload upload-icon" onclick="previewMedia()"></i>
-
-            <input type="file" id="fileInput" accept="image/*,video/*" style="display: none;" />
-            <i class="fas fa-upload upload-icon" onclick="document.getElementById('fileInput').click(); previewFile()"></i>
-
-            <div id="mediaPreview"></div>
-
-            <i class="fas fa-paper-plane post-icon" onclick="createPost()"></i>
-        </div>
+        <section id="feed">
+            <div class="container">
+                <h2>Create a Post</h2>
+                <div id="post-form">
+                    <input type="text" id="post-title" placeholder="Post Title" required>
+                    <textarea id="post-content" placeholder="What's on your mind?" required></textarea>
+                    <button id="post-button">Post</button>
+                </div>
+                <h2>News Feed</h2>
+                <div id="posts"></div>
+            </div>
+        </section>
     </main>
 
-    <footer class="footer">
-        <p>&copy; 2023 YourPlatform. All rights reserved.</p>
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Login</h2>
+            <form id="login-form">
+                <label for="username">Username:</label>
+                <input type="text" id="login-username" name="username" required>
+                
+                <label for="password">Password:</label>
+                <input type="password" id="login-password" name="password" required>
+                
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 TCW. All Rights Reserved.</p>
+            <ul>
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Terms of Service</a></li>
+                <li><a href="#">Help</a></li>
+            </ul>
+        </div>
     </footer>
 
     <script>
-        const postsContainer = document.getElementById('postsContainer');
-        const loginForm = document.getElementById('loginForm');
-        const registerForm = document.getElementById('registerForm');
-        const mediaPreview = document.getElementById('mediaPreview');
-        let currentUser = null;
+        document.addEventListener("DOMContentLoaded", () => {
+            const postButton = document.getElementById("post-button");
+            const postTitle = document.getElementById("post-title");
+            const postContent = document.getElementById("post-content");
+            const postsContainer = document.getElementById("posts");
 
-        function showPosts() {
-            loginForm.classList.add('hidden');
-            registerForm.classList.add('hidden');
-            postsContainer.classList.remove('hidden');
-            renderPosts();
-        }
+            // Open login modal
+            const loginModal = document.getElementById("login-modal");
+            const openLogin = document.getElementById("open-login");
+            const closeModal = document.getElementsByClassName("close-modal")[0];
 
-        function showLogin() {
-            loginForm.classList.remove('hidden');
-            registerForm.classList.add('hidden');
-            postsContainer.classList.add('hidden');
-        }
+            openLogin.addEventListener("click", (e) => {
+                e.preventDefault();
+                loginModal.style.display = "block";
+            });
 
-        function showRegister() {
-            registerForm.classList.remove('hidden');
-            loginForm.classList.add('hidden');
-            postsContainer.classList.add('hidden');
-        }
+            closeModal.addEventListener("click", () => {
+                loginModal.style.display = "none";
+            });
 
-        function register() {
-            const username = document.getElementById('registerUsername').value;
-            if (username) {
-                currentUser = username;
-                alert(`Registered as ${username}`);
-                showPosts();
-            } else {
-                alert('Please enter a username.');
-            }
-        }
-
-        function login() {
-            const username = document.getElementById('loginUsername').value;
-            if (username) {
-                currentUser = username;
-                alert(`Logged in as ${username}`);
-                showPosts();
-            } else {
-                alert('Please enter a username.');
-            }
-        }
-
-        function createPost() {
-            const postContent = document.getElementById('postContent').value;
-            const media = mediaPreview.innerHTML;
-            if (currentUser && (postContent || media)) {
-                const post = document.createElement('div');
-                post.classList.add('post');
-                post.innerHTML = `<h3>${currentUser}</h3><p>${postContent}</p>${media}
-                <div class="reactions">
-                    <i class="fas fa-thumbs-up reaction" onclick="addReaction(this, '👍')"></i>
-                    <i class="fas fa-thumbs-down reaction" onclick="addReaction(this, '👎')"></i>
-                    <i class="fas fa-heart reaction" onclick="addReaction(this, '❤️')"></i>
-                    <span class="reaction-count"></span>
-                </div>`;
-                postsContainer.prepend(post);
-                document.getElementById('postContent').value = ''; // Clear input
-                mediaPreview.innerHTML = ''; // Clear media preview
-            } else {
-                alert('You must be logged in to post.');
-            }
-        }
-
-        function addReaction(element, emoji) {
-            const reactionCount = element.nextElementSibling;
-            if (!reactionCount.innerHTML.includes(emoji)) {
-                reactionCount.innerHTML += emoji + " ";
-            } else {
-                alert('You have already reacted with this emoji.');
-            }
-        }
-
-        function previewMedia() {
-            const mediaUrl = document.getElementById('mediaUrl').value;
-            if (mediaUrl) {
-                const mediaElement = document.createElement('div');
-                if (mediaUrl.match(/\.(jpeg|jpg|gif|png)$/) != null) {
-                    mediaElement.innerHTML = `<img src="${mediaUrl}" alt="Image Preview">`;
-                } else if (mediaUrl.match(/\.(mp4|webm|ogg)$/) != null) {
-                    mediaElement.innerHTML = `<video controls><source src="${mediaUrl}" type="video/mp4">Your browser does not support the video tag.</video>`;
-                } else {
-                    alert('Please enter a valid image or video URL.');
+            window.addEventListener("click", (event) => {
+                if (event.target === loginModal) {
+                    loginModal.style.display = "none";
                 }
-                mediaPreview.innerHTML = ''; // Clear previous previews
-                mediaPreview.appendChild(mediaElement);
-            }
-        }
+            });
 
-        function previewFile() {
-            const fileInput = document.getElementById('fileInput');
-            const file = fileInput.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const mediaElement = document.createElement('div');
-                    if (file.type.match('image.*')) {
-                        mediaElement.innerHTML = `<img src="${e.target.result}" alt="File Preview">`;
-                    } else if (file.type.match('video.*')) {
-                        mediaElement.innerHTML = `<video controls><source src="${e.target.result}" type="${file.type}">Your browser does not support the video tag.</video>`;
-                    }
-                    mediaPreview.innerHTML = ''; // Clear previous previews
-                    mediaPreview.appendChild(mediaElement);
+            // Post creation
+            postButton.addEventListener("click", () => {
+                const title = postTitle.value.trim();
+                const content = postContent.value.trim();
+                const username = "Anonymous"; // Placeholder for username
+
+                if (title && content) {
+                    fetch('http://localhost:3000/api/posts', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ title, content, username })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                        // Clear inputs
+                        postTitle.value = "";
+                        postContent.value = "";
+                        loadPosts(); // Reload posts
+                    })
+                    .catch(error => {
+                        alert("Error: " + error.message);
+                    });
                 }
-                reader.readAsDataURL(file);
-            }
-        }
+            });
 
-        function renderPosts() {
-            // Placeholder for rendering existing posts
-            postsContainer.innerHTML = ''; // Clear previous posts
-        }
+            // Load posts
+            function loadPosts() {
+                fetch('http://localhost:3000/api/posts')
+                .then(response => response.json())
+                .then(posts => {
+                    postsContainer.innerHTML = ""; // Clear existing posts
+                    posts.forEach(post => {
+                        const postDiv = document.createElement("div");
+                        postDiv.classList.add("post");
+                        postDiv.innerHTML = `
+                            <div class="post-header">
+                                <h3>${post.title}</h3>
+                                <div>
+                                    <button class="upvote-button">▲</button>
+                                    <span>${post.votes} votes</span>
+                                    <button class="downvote-button">▼</button>
+                                </div>
+                            </div>
+                            <div class="post-content">${post.content}</div>
+                            <div class="comments">
+                                <textarea placeholder="Add a comment..." class="comment-input"></textarea>
+                                <button class="comment-button">Comment</button>
+                                <div class="comment-list"></div>
+                            </div>
+                        `;
+                        postsContainer.appendChild(postDiv);
+
+                        // Add event listeners for voting
+                        postDiv.querySelector('.upvote-button').addEventListener('click', () => {
+                            fetch(`http://localhost:3000/api/posts/${post.title}/upvote`, {
+                                method: 'POST'
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                postDiv.querySelector('span').innerText = `${data.votes} votes`;
+                            });
+                        });
+
+                        postDiv.querySelector('.downvote-button').addEventListener('click', () => {
+                            fetch(`http://localhost:3000/api/posts/${post.title}/downvote`, {
+                                method: 'POST'
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                postDiv.querySelector('span').innerText = `${data.votes} votes`;
+                            });
+                        });
+
+                        // Add event listener for comments
+                        postDiv.querySelector('.comment-button').addEventListener('click', () => {
+                            const comment = postDiv.querySelector('.comment-input').value.trim();
+                            if (comment) {
+                                fetch(`http://localhost:3000/api/posts/${post.title}/comments`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({ comment })
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    alert(data.message);
+                                    loadPosts(); // Reload posts to update comments
+                                });
+                            }
+                        });
+                    });
+                });
+            }
+
+            loadPosts(); // Initial load of posts
+
+            const loginForm = document.getElementById("login-form");
+            if (loginForm) {
+                loginForm.addEventListener("submit", (e) => {
+                    e.preventDefault();
+                    const username = document.getElementById("login-username").value;
+                    const password = document.getElementById("login-password").value;
+
+                    // Send login request to the server
+                    fetch('http://localhost:3000/api/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ username, password })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                        if (data.message === "Login successful!") {
+                            loginModal.style.display = "none"; // Close the modal
+                        }
+                    })
+                    .catch(error => {
+                        alert("Error: " + error.message);
+                    });
+                });
+            }
+        });
     </script>
 </body>
 </html>
